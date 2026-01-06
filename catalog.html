@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Catalog | Vallabh Govt College Library</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600;700&family=Courier+Prime&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #1b4d3e;
+            --secondary: #d4af37;
+            --dark: #1a1a1a;
+            --light: #f9f7f2;
+            --white: #ffffff;
+            --border: #e0e0e0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
+
+        /* --- HEADER (CONSISTENT) --- */
+        header {
+            background-color: var(--primary);
+            padding: 0 5%;
+            height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .brand i { font-size: 2rem; color: var(--secondary); }
+        .brand-text h1 { font-size: 1.2rem; line-height: 1; font-weight: 700; letter-spacing: 1px; }
+        .brand-text span { font-size: 0.75rem; font-family: 'Lato', sans-serif; opacity: 0.8; letter-spacing: 2px; }
+
+        nav ul { display: flex; list-style: none; gap: 30px; }
+        nav a { color: rgba(255,255,255,0.8); text-decoration: none; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; position: relative; font-size: 0.95rem; }
+        nav a:hover, nav a.active { color: var(--secondary); }
+        nav a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--secondary); transition: 0.3s; }
+        nav a:hover::after { width: 100%; }
+
+        .btn-login { background: var(--secondary); color: var(--primary); padding: 8px 25px; border-radius: 2px; font-weight: 700; text-decoration: none; transition: 0.3s; }
+        .btn-login:hover { background: white; }
+
+        /* --- CATALOG LAYOUT --- */
+        .catalog-wrapper {
+            display: flex;
+            margin-top: 80px; /* Offset Header */
+            min-height: 100vh;
+        }
+
+        /* Sidebar Filter */
+        .sidebar {
+            width: 280px;
+            background: white;
+            padding: 30px;
+            border-right: 1px solid var(--border);
+            position: fixed;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            top: 80px;
+            left: 0;
+            z-index: 900;
+        }
+
+        .filter-group { margin-bottom: 30px; }
+        .filter-title { font-size: 1.1rem; color: var(--primary); margin-bottom: 15px; font-weight: 700; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+
+        .search-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-family: 'Lato', sans-serif;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: #555;
+            transition: 0.2s;
+        }
+
+        .checkbox-group label:hover { color: var(--primary); }
+        .checkbox-group input { accent-color: var(--primary); }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px; /* Sidebar width */
+            padding: 30px 5%;
+            background: #fafafa;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .results-count { font-weight: 700; color: #666; }
+
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 30px;
+        }
+
+        /* Book Card */
+        .book-card {
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            border: 1px solid transparent;
+            position: relative;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border-color: var(--secondary);
+        }
+
+        .book-cover {
+            height: 300px;
+            width: 100%;
+            object-fit: cover;
+            background: #eee;
+        }
+
+        .book-details { padding: 15px; }
+        
+        .book-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+            line-height: 1.3;
+            /* Truncate text */
+            white-space: nowrap; 
+            overflow: hidden;
+            text-overflow: ellipsis; 
+        }
+
+        .book-author { font-size: 0.9rem; color: #777; margin-bottom: 10px; font-style: italic; }
+
+        .call-number {
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.8rem;
+            background: #eee;
+            padding: 3px 8px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        .availability {
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .avail-green { color: #27ae60; }
+        .avail-red { color: #c0392b; }
+
+        .card-actions {
+            border-top: 1px solid #eee;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            background: #fff;
+        }
+
+        .btn-action {
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary);
+            transition: 0.2s;
+        }
+
+        .btn-action:hover { color: var(--secondary); }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 50px;
+        }
+
+        .page-btn {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .page-btn.active, .page-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* --- FOOTER --- */
+        footer { background: #111; color: #ccc; padding: 70px 5% 20px; z-index: 1001; position: relative; }
+        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 50px; margin-bottom: 50px; }
+        .footer-logo h2 { color: white; margin-bottom: 15px; font-family: 'Playfair Display', serif; }
+        .footer-logo span { color: var(--secondary); }
+        .links h3 { color: white; margin-bottom: 20px; border-bottom: 1px solid #333; display: inline-block; padding-bottom: 5px; }
+        .links ul { list-style: none; }
+        .links li { margin-bottom: 10px; }
+        .links a { color: #ccc; text-decoration: none; transition: 0.3s; }
+        .links a:hover { color: var(--secondary); }
+        .copyright { text-align: center; border-top: 1px solid #333; padding-top: 20px; font-size: 0.85rem; }
+
+        /* --- MOBILE RESPONSIVE --- */
+        .mobile-filter-toggle { display: none; }
+
+        @media (max-width: 900px) {
+            header { padding: 0 20px; }
+            nav { display: none; }
+            
+            .catalog-wrapper { flex-direction: column; }
+            
+            .mobile-filter-toggle {
+                display: block;
+                width: 100%;
+                padding: 15px;
+                background: white;
+                border: none;
+                border-bottom: 1px solid #ccc;
+                text-align: left;
+                font-weight: 700;
+                color: var(--primary);
+                cursor: pointer;
+            }
+
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                display: none; /* Hidden by default on mobile */
+                border-right: none;
+                border-bottom: 1px solid #ccc;
+            }
+
+            .sidebar.active { display: block; animation: slideDown 0.3s ease; }
+            
+            .main-content { margin-left: 0; padding: 20px; }
+            .book-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
+            .book-cover { height: 220px; }
+        }
+
+        @keyframes slideDown { from {opacity: 0; transform: translateY(-10px);} to {opacity: 1; transform: translateY(0);} }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="brand">
+            <i class="fas fa-book-reader"></i>
+            <div class="brand-text">
+                <h1>VALLABH</h1>
+                <span>GOVT COLLEGE MANDI</span>
+            </div>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="catalog.html" class="active">Catalog</a></li>
+                <li><a href="E-resources.html">E-Resources</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+        <a href="login.html" class="btn-login"><i class="fas fa-user"></i> Login</a>
+    </header>
+
+    <div class="catalog-wrapper">
+        
+        <button class="mobile-filter-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-filter"></i> Filter Results
+        </button>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="filter-group">
+                <div class="filter-title">Search</div>
+                <input type="text" class="search-input" id="bookSearch" placeholder="Title, Author, ISBN...">
+            </div>
+
+            <div class="filter-group">
+                <div class="filter-title">Category</div>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" checked value="all" onchange="filterCategory('all')"> All Categories</label>
+                    <label><input type="checkbox" value="science" onchange="filterCategory('science')"> Science & Tech</label>
+                    <label><input type="checkbox" value="history" onchange="filterCategory('history')"> History & Pol. Sci</label>
+                    <label><input type="checkbox" value="literature" onchange="filterCategory('literature')"> Literature</label>
+                    <label><input type="checkbox" value="economics" onchange="filterCategory('economics')"> Economics</label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <div class="filter-title">Availability</div>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" checked> Show Available Only</label>
+                    <label><input type="checkbox"> Include E-Books</label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <div class="filter-title">Language</div>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" checked> English</label>
+                    <label><input type="checkbox"> Hindi</label>
+                    <label><input type="checkbox"> Sanskrit</label>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="results-header">
+                <span class="results-count">Showing 8 Results</span>
+                <select style="padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option>Sort by: Newest</option>
+                    <option>Sort by: Title (A-Z)</option>
+                    <option>Sort by: Author (A-Z)</option>
+                </select>
+            </div>
+
+            <div class="book-grid" id="bookGrid">
+                
+                <div class="book-card" data-category="science" data-aos="fade-up">
+                    <img src="https://images.unsplash.com/photo-1629198688000-71f23e745b6e?auto=format&fit=crop&w=400&q=80" alt="Book" class="book-cover">
+                    <div class="book-details">
+                        <div class="call-number">530.1 HAW</div>
+                        <h3 class="book-title">A Brief History of Time</h3>
+                        <div class="book-author">Stephen Hawking</div>
+                        <div class="availability avail-green"><i class="fas fa-check-circle"></i> Available</div>
+                    </div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-action">View Details</a>
+                        <a href="#" class="btn-action"><i class="far fa-bookmark"></i> Reserve</a>
+                    </div>
+                </div>
+
+                <div class="book-card" data-category="literature" data-aos="fade-up" data-aos-delay="100">
+                    <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=400&q=80" alt="Book" class="book-cover">
+                    <div class="book-details">
+                        <div class="call-number">823.9 Orwell</div>
+                        <h3 class="book-title">1984</h3>
+                        <div class="book-author">George Orwell</div>
+                        <div class="availability avail-red"><i class="fas fa-times-circle"></i> Issued (Due: 12 Oct)</div>
+                    </div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-action">View Details</a>
+                        <a href="#" class="btn-action" style="color: #999; pointer-events: none;">Waitlist</a>
+                    </div>
+                </div>
+
+                <div class="book-card" data-category="history" data-aos="fade-up" data-aos-delay="200">
+                    <img src="https://images.unsplash.com/photo-1505664194779-8beaceb93744?auto=format&fit=crop&w=400&q=80" alt="Book" class="book-cover">
+                    <div class="book-details">
+                        <div class="call-number">954 Guha</div>
+                        <h3 class="book-title">India After Gandhi</h3>
+                        <div class="book-author">Ramachandra Guha</div>
+                        <div class="availability avail-green"><i class="fas fa-check-circle"></i> Available</div>
+                    </div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-action">View Details</a>
+                        <a href="#" class="btn-action"><i class="far fa-bookmark"></i> Reserve</a>
+                    </div>
+                </div>
+
+                <div class="book-card" data-category="science" data-aos="fade-up" data-aos-delay="300">
+                    <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=400&q=80" alt="Book" class="book-cover">
+                    <div class="book-details">
+                        <div class="call-number">005.1 Cormen</div>
+                        <h3 class="book-title">Introduction to Algorithms</h3>
+                        <div class="book-author">T.H. Cormen</div>
+                        <div class="availability avail-green"><i class="fas fa-check-circle"></i> Available</div>
+                    </div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-action">View Details</a>
+                        <a href="#" class="btn-action"><i class="far fa-bookmark"></i> Reserve</a>
+                    </div>
+                </div>
+
+                 <div class="book-card" data-category="economics" data-aos="fade-up" data-aos-delay="400">
+                    <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=400&q=80" alt="Book" class="book-cover">
+                    <div class="book-details">
+                        <div class="call-number">330.9 Piketty</div>
+                        <h3 class="book-title">Capital in the 21st Century</h3>
+                        <div class="book-author">Thomas Piketty</div>
+                        <div class="availability avail-red"><i class="fas fa-times-circle"></i> Issued</div>
+                    </div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-action">View Details</a>
+                        <a href="#" class="btn-action">Waitlist</a>
+                    </div>
+                </div>
+
+                <div class="book-card" data-category="literature" data-aos="fade-up" data-aos-delay="500">
+                    <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=400&q=80" alt="Book" class="book-cover">
+                    <div class="book-details">
+                        <div class="call-number">821.7 Keats</div>
+                        <h3 class="book-title">Complete Poems</h3>
+                        <div class="book-author">John Keats</div>
+                        <div class="availability avail-green"><i class="fas fa-check-circle"></i> Available</div>
+                    </div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-action">View Details</a>
+                        <a href="#" class="btn-action"><i class="far fa-bookmark"></i> Reserve</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pagination">
+                <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h2>VALLABH <span>LIBRARY</span></h2>
+                <p style="color: #aaa;">Empowering students of Mandi with resources, technology, and a peaceful environment for learning.</p>
+            </div>
+            
+            <div class="links">
+                <h3>Catalog</h3>
+                <ul>
+                    <li><a href="#">New Arrivals</a></li>
+                    <li><a href="#">Top Rated</a></li>
+                    <li><a href="#">Suggest a Book</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2024 Vallabh Govt College Mandi. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+
+        // Mobile Sidebar Toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Live Search Filter
+        const searchInput = document.getElementById('bookSearch');
+        const cards = document.querySelectorAll('.book-card');
+
+        searchInput.addEventListener('keyup', (e) => {
+            const term = e.target.value.toLowerCase();
+            cards.forEach(card => {
+                const title = card.querySelector('.book-title').innerText.toLowerCase();
+                const author = card.querySelector('.book-author').innerText.toLowerCase();
+                const call = card.querySelector('.call-number').innerText.toLowerCase();
+                
+                if(title.includes(term) || author.includes(term) || call.includes(term)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Category Filter Logic
+        function filterCategory(category) {
+            // Uncheck other boxes for simplicity in this demo (make it act like radio)
+            const checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]');
+            checkboxes.forEach(box => {
+                if(box.value !== category) box.checked = false;
+            });
+            event.target.checked = true; // Ensure clicked is checked
+
+            cards.forEach(card => {
+                if(category === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    if(card.getAttribute('data-category') === category) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

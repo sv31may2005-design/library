@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vallabh Govt College Mandi | Central Library</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #1b4d3e; /* Deep Emerald Green */
+            --secondary: #d4af37; /* Academic Gold */
+            --dark: #1a1a1a;
+            --light: #f9f7f2; /* Warm Paper/Cream color */
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* --- NAVIGATION --- */
+        header {
+            background-color: var(--primary);
+            padding: 0 5%;
+            height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            transition: 0.4s;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .brand i { font-size: 2rem; color: var(--secondary); }
+        .brand-text h1 { font-size: 1.2rem; line-height: 1; font-weight: 700; letter-spacing: 1px; }
+        .brand-text span { font-size: 0.75rem; font-family: 'Lato', sans-serif; opacity: 0.8; letter-spacing: 2px; }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        nav a:hover, nav a.active { color: var(--secondary); }
+        nav a::after {
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: -5px; left: 0; background-color: var(--secondary);
+            transition: 0.3s;
+        }
+        nav a:hover::after { width: 100%; }
+
+        .btn-login {
+            background: var(--secondary);
+            color: var(--primary);
+            padding: 8px 25px;
+            border-radius: 2px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .btn-login:hover { background: white; }
+
+        /* --- HERO SEARCH SECTION --- */
+        .hero {
+            height: 90vh;
+            background: linear-gradient(rgba(27, 77, 62, 0.85), rgba(27, 77, 62, 0.7)),
+                        url('https://images.unsplash.com/photo-1507842217121-9e96e47b86aa?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+        }
+
+        .hero h1 { font-size: 4rem; margin-bottom: 10px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+        .hero p { font-size: 1.2rem; margin-bottom: 40px; font-weight: 300; letter-spacing: 1px; }
+
+        .search-box {
+            background: white;
+            padding: 10px;
+            border-radius: 50px;
+            display: flex;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+
+        .search-box:hover { transform: translateY(-5px); }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 15px 25px;
+            font-size: 1rem;
+            border-radius: 50px 0 0 50px;
+        }
+
+        .search-box button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .search-box button:hover { background: var(--secondary); color: var(--primary); }
+
+        /* --- SERVICES --- */
+        .services {
+            padding: 80px 10%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: -80px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .service-card {
+            background: white;
+            padding: 40px 30px;
+            text-align: center;
+            border-top: 4px solid var(--secondary);
+            box-shadow: var(--shadow);
+            transition: 0.4s;
+        }
+
+        .service-card:hover { transform: translateY(-10px); }
+        .service-card i { font-size: 2.5rem; color: var(--primary); margin-bottom: 20px; }
+        .service-card h3 { margin-bottom: 15px; color: var(--primary); }
+        .service-card p { color: #666; font-size: 0.9rem; line-height: 1.6; }
+
+        /* --- ARRIVALS / RESULTS --- */
+        .arrivals {
+            padding: 100px 10%;
+            background: var(--light);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 { font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; }
+        .section-header .divider { height: 3px; width: 80px; background: var(--secondary); margin: 0 auto; }
+
+        .book-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 40px;
+            min-height: 300px;
+        }
+
+        .book-card {
+            width: 200px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .book-inner {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .book-card:hover .book-inner { transform: rotateY(-20deg) scale(1.05); }
+
+        .book-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 2px 5px 5px 2px;
+        }
+
+        .book-info {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .book-info h4 { font-size: 1.1rem; margin-bottom: 5px; color: var(--primary); }
+        .book-info span { color: #666; font-size: 0.9rem; font-style: italic; }
+
+        /* --- STATS --- */
+        .stats {
+            background: var(--primary);
+            color: white;
+            padding: 80px 10%;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            text-align: center;
+        }
+
+        .stat-item h2 { font-size: 3rem; color: var(--secondary); margin-bottom: 10px; }
+        .stat-item p { letter-spacing: 1px; text-transform: uppercase; font-size: 0.9rem; }
+
+        footer {
+            background: #111;
+            color: #ccc;
+            padding: 70px 5% 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            margin-bottom: 50px;
+        }
+
+        .copyright {
+            text-align: center;
+            border-top: 1px solid #333;
+            padding-top: 20px;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .search-box { flex-direction: column; border-radius: 20px; }
+            .search-box input, .search-box button { border-radius: 20px; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="brand">
+            <i class="fas fa-book-reader"></i>
+            <div class="brand-text">
+                <h1>VALLABH</h1>
+                <span>GOVT COLLEGE MANDI</span>
+            </div>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="catalog.html">Catalog</a></li>
+                <li><a href="E-resources.html">E-Resources</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+        <a href="#" class="btn-login"><i class="fas fa-user"></i> Login</a>
+    </header>
+
+    <section class="hero">
+        <div data-aos="fade-up">
+            <h1>Gateway to Knowledge</h1>
+            <p>Explore over 50,000 books, journals, and digital resources.</p>
+            
+            <div class="search-box">
+                <input type="text" id="userInput" placeholder="Search for Title, Author, or ISBN..." onkeypress="if(event.key === 'Enter') searchBooks()">
+                <button onclick="searchBooks()"><i class="fas fa-search"></i> Search Catalog</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="services">
+        <div class="service-card" data-aos="fade-up">
+            <i class="fas fa-laptop-code"></i>
+            <h3>Digital Library</h3>
+            <p>Access thousands of e-books and research papers from anywhere.</p>
+        </div>
+        <div class="service-card" data-aos="fade-up" data-aos-delay="100">
+            <i class="fas fa-clock"></i>
+            <h3>Library Hours</h3>
+            <p>Mon - Sat: 9:00 AM - 8:00 PM</p>
+        </div>
+        <div class="service-card" data-aos="fade-up" data-aos-delay="200">
+            <i class="fas fa-wifi"></i>
+            <h3>Free Wi-Fi</h3>
+            <p>High-speed internet zones for all students.</p>
+        </div>
+    </section>
+
+    <section class="arrivals" id="resultsSection">
+        <div class="section-header" data-aos="fade-down">
+            <h2 id="displayTitle">New Arrivals</h2>
+            <div class="divider"></div>
+        </div>
+
+        <div class="book-grid" id="bookDisplay">
+            <div class="book-card">
+                <div class="book-inner"><img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400" alt="Book"></div>
+                <div class="book-info"><h4>The History of Art</h4><span>E. Gombrich</span></div>
+            </div>
+            <div class="book-card">
+                <div class="book-inner"><img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400" alt="Book"></div>
+                <div class="book-info"><h4>Data Structures</h4><span>A. Tanenbaum</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="stat-item"><h2>50k+</h2><p>Books</p></div>
+        <div class="stat-item"><h2>10k+</h2><p>E-Resources</p></div>
+        <div class="stat-item"><h2>500+</h2><p>Visitors</p></div>
+        <div class="stat-item"><h2>1958</h2><p>Since</p></div>
+    </section>
+
+    <footer>
+        <div class="copyright">&copy; 2024 Vallabh Govt College Mandi.</div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000, once: true });
+
+        // API SEARCH FEATURE
+        async function searchBooks() {
+            const query = document.getElementById('userInput').value;
+            if (!query) return;
+
+            const display = document.getElementById('bookDisplay');
+            const title = document.getElementById('displayTitle');
+            
+            display.innerHTML = "<p>Searching Catalog...</p>";
+            title.innerText = "Search Results";
+
+            try {
+                const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=8`);
+                const data = await response.json();
+                
+                display.innerHTML = ""; 
+
+                if (!data.items) {
+                    display.innerHTML = "<p>No books found in our database.</p>";
+                    return;
+                }
+
+                data.items.forEach((item, index) => {
+                    const info = item.volumeInfo;
+                    const img = info.imageLinks ? info.imageLinks.thumbnail : 'https://via.placeholder.com/400x600?text=No+Cover';
+                    
+                    display.innerHTML += `
+                        <div class="book-card" data-aos="zoom-in" data-aos-delay="${index * 50}">
+                            <div class="book-inner">
+                                <img src="${img}" alt="book">
+                            </div>
+                            <div class="book-info">
+                                <h4>${info.title.substring(0, 30)}...</h4>
+                                <span>${info.authors ? info.authors[0] : 'Unknown'}</span>
+                            </div>
+                        </div>`;
+                });
+
+                AOS.refresh();
+                document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+
+            } catch (err) {
+                display.innerHTML = "<p>Error connecting to API.</p>";
+            }
+        }
+
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            header.style.background = window.scrollY > 50 ? '#153d31' : '#1b4d3e';
+        });
+    </script>
+</body>
+</html>

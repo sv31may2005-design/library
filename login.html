@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Vallabh Govt College Library</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #1b4d3e;
+            --secondary: #d4af37;
+            --dark: #1a1a1a;
+            --light: #f9f7f2;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
+
+        /* --- HEADER (MATCHING) --- */
+        header {
+            background-color: var(--primary);
+            padding: 0 5%;
+            height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .brand i { font-size: 2rem; color: var(--secondary); }
+        .brand-text h1 { font-size: 1.2rem; line-height: 1; font-weight: 700; letter-spacing: 1px; }
+        .brand-text span { font-size: 0.75rem; font-family: 'Lato', sans-serif; opacity: 0.8; letter-spacing: 2px; }
+
+        nav ul { display: flex; list-style: none; gap: 30px; }
+        nav a { color: rgba(255,255,255,0.8); text-decoration: none; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; position: relative; font-size: 0.95rem; }
+        nav a:hover, nav a.active { color: var(--secondary); }
+        
+        .btn-home { background: var(--secondary); color: var(--primary); padding: 8px 25px; border-radius: 2px; font-weight: 700; text-decoration: none; transition: 0.3s; }
+        .btn-home:hover { background: white; }
+
+        /* --- LOGIN CONTAINER --- */
+        .login-wrapper {
+            display: flex;
+            height: 100vh;
+            padding-top: 80px; /* Offset fixed header */
+        }
+
+        /* Left Side: Image */
+        .login-image {
+            flex: 1;
+            background: linear-gradient(rgba(27, 77, 62, 0.85), rgba(27, 77, 62, 0.7)),
+                        url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            color: white;
+            position: relative;
+        }
+
+        .login-image h2 { font-size: 3.5rem; margin-bottom: 20px; line-height: 1.2; }
+        .login-image p { font-size: 1.1rem; opacity: 0.9; max-width: 500px; line-height: 1.6; }
+
+        /* Right Side: Form */
+        .login-form-container {
+            flex: 1;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header { margin-bottom: 40px; text-align: center; }
+        .login-header h3 { font-size: 2rem; color: var(--primary); margin-bottom: 5px; }
+        .login-header p { color: #666; font-size: 0.95rem; }
+
+        /* Toggle Switch (Student/Staff) */
+        .user-toggle {
+            display: flex;
+            background: #f0f0f0;
+            padding: 5px;
+            border-radius: 50px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 50px;
+            font-weight: 600;
+            color: #666;
+            transition: 0.3s;
+            z-index: 2;
+        }
+
+        .toggle-btn.active { color: white; }
+        
+        .toggle-bg {
+            position: absolute;
+            top: 5px; left: 5px;
+            width: calc(50% - 5px);
+            height: calc(100% - 10px);
+            background: var(--primary);
+            border-radius: 50px;
+            transition: 0.3s;
+            z-index: 1;
+        }
+
+        /* Floating Input Fields */
+        .input-group { position: relative; margin-bottom: 30px; }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px 0;
+            font-size: 1rem;
+            color: var(--dark);
+            border: none;
+            border-bottom: 2px solid #ddd;
+            outline: none;
+            background: transparent;
+            transition: 0.3s;
+        }
+
+        .input-group label {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            font-size: 1rem;
+            color: #999;
+            pointer-events: none;
+            transition: 0.3s;
+        }
+
+        /* Focus Effects */
+        .input-group input:focus, 
+        .input-group input:valid {
+            border-bottom-color: var(--secondary);
+        }
+
+        .input-group input:focus ~ label,
+        .input-group input:valid ~ label {
+            top: -20px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Password Eye */
+        .toggle-password {
+            position: absolute;
+            right: 0;
+            top: 10px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .options a { color: var(--primary); text-decoration: none; font-weight: 600; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            letter-spacing: 1px;
+            border-radius: 4px;
+        }
+
+        .btn-submit:hover { background: var(--secondary); color: var(--primary); }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            header { padding: 0 20px; }
+            nav { display: none; }
+            .login-wrapper { flex-direction: column; height: auto; min-height: 100vh; }
+            .login-image { display: none; } /* Hide image on mobile for cleaner focus */
+            .login-form-container { padding: 60px 20px; flex: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="brand">
+            <i class="fas fa-book-reader"></i>
+            <div class="brand-text">
+                <h1>VALLABH</h1>
+                <span>GOVT COLLEGE MANDI</span>
+            </div>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="catalog.html">Catalog</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+        <a href="index.html" class="btn-home">Back to Home</a>
+    </header>
+
+    <div class="login-wrapper">
+        
+        <div class="login-image" data-aos="fade-right">
+            <div>
+                <h2>Welcome Back<br>to the Archives.</h2>
+                <div style="height: 4px; width: 60px; background: var(--secondary); margin: 20px 0;"></div>
+                <p>Log in to access your digital bookshelf, renew borrowed items, and explore our research databases.</p>
+            </div>
+        </div>
+
+        <div class="login-form-container" data-aos="fade-left">
+            <div class="login-box">
+                <div class="login-header">
+                    <h3>Member Login</h3>
+                    <p>Please enter your library credentials</p>
+                </div>
+
+                <div class="user-toggle">
+                    <div class="toggle-bg" id="toggleBg"></div>
+                    <div class="toggle-btn active" onclick="setUserType('student')">Student</div>
+                    <div class="toggle-btn" onclick="setUserType('staff')">Faculty</div>
+                </div>
+
+                <form id="loginForm">
+                    <div class="input-group">
+                        <input type="text" id="username" required>
+                        <label for="username">Library Card No / Roll No</label>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" id="password" required>
+                        <label for="password">Password</label>
+                        <i class="fas fa-eye toggle-password" id="eyeIcon"></i>
+                    </div>
+
+                    <div class="options">
+                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                            <input type="checkbox"> Remember me
+                        </label>
+                        <a href="#">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <span id="btnText">Secure Login</span>
+                        <i class="fas fa-arrow-right" style="margin-left: 10px;"></i>
+                    </button>
+                </form>
+
+                <p style="text-align: center; margin-top: 30px; font-size: 0.9rem; color: #666;">
+                    Don't have a card? <a href="contact.html" style="color: var(--primary); font-weight: 700; text-decoration: none;">Apply for Membership</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+
+        // Password Show/Hide
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        eyeIcon.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            eyeIcon.classList.toggle('fa-eye');
+            eyeIcon.classList.toggle('fa-eye-slash');
+        });
+
+        // User Type Toggle Animation
+        const toggleBg = document.getElementById('toggleBg');
+        const btns = document.querySelectorAll('.toggle-btn');
+
+        function setUserType(type) {
+            if(type === 'student') {
+                toggleBg.style.left = '5px';
+                btns[0].classList.add('active');
+                btns[1].classList.remove('active');
+            } else {
+                toggleBg.style.left = '50%';
+                btns[0].classList.remove('active');
+                btns[1].classList.add('active');
+            }
+        }
+
+        // Login Simulation
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.querySelector('.btn-submit');
+            const originalText = document.getElementById('btnText').innerText;
+            
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Authenticating...';
+            btn.style.opacity = '0.8';
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-check"></i> Access Granted';
+                btn.style.background = '#1b4d3e'; // keep green
+                // Redirect would happen here
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
